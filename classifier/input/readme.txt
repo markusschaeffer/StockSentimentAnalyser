@@ -1,0 +1,1 @@
+export-dynamodb -t Stocktwits -f csv
