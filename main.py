@@ -5,6 +5,8 @@ import json
 import re
 import dill
 import boto3
+import time
+import logging
 
 #imports necessary for the model/classifier
 import numpy as np
@@ -95,11 +97,11 @@ class MyStreamListener(StreamListener):
                     self.model.putTweet(symbol, created_at, text, prediction, probaBull, probaBear)
             return True
         except BaseException as e:
-            print("Error on_data %s" % str(e))
+            logging.error("Error on_data %s" % str(e))
         return True
           
     def on_error(self, status):
-        print(status)
+        logging.error(str(status))
 
 class MyHelper():
     
@@ -193,7 +195,10 @@ class MyClassifier():
         """
         return self.model.predict_proba([text])[0][0]
 
-if __name__ == '__main__':
+def main():
+    logging.basicConfig(filename='mylog_' + time.strftime("%Y-%m-%d-%H-%M-%S") + '.log', level=logging.INFO, format='%(asctime)s : %(message)s')
+    logging.info('Starting Application')
+
     #get symbols of stocks on the watchlist
     wl = Watchlist()
     symbols = list(map(lambda stock: '$' + stock, wl.getSymbols()))
@@ -201,3 +206,12 @@ if __name__ == '__main__':
     # start Twitter stream
     twitter_streamer = MyTwitterStreamer()
     twitter_streamer.stream_tweets(symbols)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception:
+        logging.exception("Fatal error in main loop")
+        time.sleep(1)
+        logging.info('Restarting')
+        main() # restart
