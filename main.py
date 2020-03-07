@@ -208,10 +208,13 @@ def main():
     twitter_streamer.stream_tweets(symbols)
 
 if __name__ == '__main__':
-    try:
-        main()
-    except Exception:
-        logging.exception("Fatal error in main loop")
-        time.sleep(1)
-        logging.info('Restarting')
-        main() # restart
+    sleep_delay_counter = 1
+    while True:
+        try:
+            main()
+        except Exception:
+            logging.exception("Fatal error in main loop")
+            time.sleep(60 * sleep_delay_counter) # time to sleep in minutes
+            sleep_delay_counter += 1
+            logging.info('Restarting')
+            continue
