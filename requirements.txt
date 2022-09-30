@@ -8,7 +8,7 @@ idna==2.9
 imbalanced-learn==0.6.2
 imblearn==0.0
 jmespath==0.9.5
-joblib==0.14.1
+joblib==1.2.0
 nltk==3.4.5
 numpy==1.18.1
 oauthlib==3.1.0
